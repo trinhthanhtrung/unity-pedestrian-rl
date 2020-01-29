@@ -12,6 +12,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 public class PedestrianRouteControl : MonoBehaviour
 {
     public AgentRoute agentRoute;
+    public Transform direction; 
     public float currentSpeed = 0.4f;
     public bool showCurrentTarget = false;
     private GameObject currentRouteDest;
