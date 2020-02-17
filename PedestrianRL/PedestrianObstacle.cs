@@ -17,13 +17,13 @@ public class PedestrianObstacle : Obstacle
     // Update is called once per frame
     void Update()
     {
-        PedestrianDest movingObsEndNode = pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>().agentRoute.activeRoute[11];
+        PedestrianDest movingObsEndNode = pedestrianObstacleAgent.GetComponent<PedestrianDecisionControl>().agentRoute.activeRoute[11];
         movingObsEndNode.transform.localPosition = new Vector3(GetPredictedDestinationX(), 0.5f, -12f);
     }
 
     public AgentRoute GetPredictedRoute()
     {
-        return pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>().agentRoute;
+        return pedestrianObstacleAgent.GetComponent<PedestrianDecisionControl>().agentRoute;
     }
 
     public float GetPredictedDestinationX()
@@ -36,8 +36,8 @@ public class PedestrianObstacle : Obstacle
 
         Vector3 movingObsPos = pedestrianObstacleAgent.transform.localPosition;
         Vector3 velocityVector;
-        if (pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>())
-            velocityVector = pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>().direction.localPosition;
+        if (pedestrianObstacleAgent.GetComponent<PedestrianDecisionControl>())
+            velocityVector = pedestrianObstacleAgent.GetComponent<PedestrianDecisionControl>().direction.localPosition;
         else
         {
             Debug.Log("WARNING: Obstacle's velocity vector has NOT been set. Default to (0,1).");
