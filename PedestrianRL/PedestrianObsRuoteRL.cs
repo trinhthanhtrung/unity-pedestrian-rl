@@ -25,12 +25,12 @@ public class PedestrianObsRuoteRL : Agent
     void OnDrawGizmosSelected()
     {
         // Draw a the route path when selected in Unity
-        agentRoute = this.GetComponent<PedestrianDecisionControl>().agentRoute;
+        agentRoute = this.GetComponent<PedestrianRouteControl>().agentRoute;
         // Draw the line from agent to direction vector object if exists
-        if (this.GetComponent<PedestrianDecisionControl>().direction != null)
+        if (this.GetComponent<PedestrianRouteControl>().direction != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(this.transform.position, this.GetComponent<PedestrianDecisionControl>().direction.transform.position);
+            Gizmos.DrawLine(this.transform.position, this.GetComponent<PedestrianRouteControl>().direction.transform.position);
         }
 
         // Draw first line from this transform to the target
@@ -46,7 +46,7 @@ public class PedestrianObsRuoteRL : Agent
     void Start()
     {
         // Get agentRoute from AICharacterBehaviour script
-        agentRoute = this.GetComponent<PedestrianDecisionControl>().agentRoute;
+        agentRoute = this.GetComponent<PedestrianRouteControl>().agentRoute;
         noOfRouteNodes = agentRoute.activeRoute.Length - 2; // Exclude endNode & startNode
 
         AgentReset();

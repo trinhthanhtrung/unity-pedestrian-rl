@@ -6,8 +6,8 @@ public enum DestinationReached
 {
     None,
     Destroy, // Imidiately destroy agent when reached
-    TurnBack, // TODO: Return to the starting position using given waypoints
-    GoToStart // TODO: Go to starting position imidiately after reached
+    TOBEIMPLEMENTEDTurnBack, // TODO: Return to the starting position using given waypoints
+    TOBEIMPLEMENTEDGoToStart // TODO: Go to starting position imidiately after reached
 }
 
 public class PedestrianEnd : PedestrianDest

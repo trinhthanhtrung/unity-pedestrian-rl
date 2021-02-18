@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-
     public float dangerLevel = 0f;
     public float size = 1f;
 
     public bool isActive = true;
 
-    public void Clone(GameObject obstacle)
+    public void clone(GameObject obstacle)
     {
 
         this.dangerLevel = obstacle.GetComponent<Obstacle>().dangerLevel;
