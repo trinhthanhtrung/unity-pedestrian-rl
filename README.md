@@ -8,7 +8,7 @@ This is the implementation of our research in using Unity-ML for pedestrian simu
 _Most microscopic pedestrian navigation models use the concept of “forces” applied to the pedestrian agents to replicate the navigation environment. While the approach could provide believable results in regular situations, it does not always resemble natural pedestrian navigation behaviour in many typical settings.  In our research, we proposed a novel approach using reinforcement learning for simulation of pedestrian agent path planning and collision avoidance problem. The primary focus of this approach is using human perception of the environment and danger awareness of interferences. The implementation of our model has shown that the path planned by the agent shares many similarities with a human pedestrian in several aspects such as following common walking conventions and human behaviours._
 
 If you use this implementation for your research, please cite our paper  
-_Trinh, T. T., Vu, D. M., & Kimura, M. (2020, March). A pedestrian path-planning model in accordance with obstacle's danger with reinforcement learning. In Proceedings of the 2020 The 3rd International Conference on Information Science and System (pp. 115-120)._
+_Trinh T-T, Kimura M. The Impact of Obstacle’s Risk in Pedestrian Agent’s Local Path-Planning. Applied Sciences. 2021; 11(12):5442. https://doi.org/10.3390/app11125442_
 
 ## 2. Pedestrian interaction simulation with reinforcement learning and human cognitive prediction
 
