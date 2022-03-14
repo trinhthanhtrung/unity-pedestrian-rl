@@ -13,9 +13,10 @@ using UnityEngine;
 /// </summary>
 public class PedestrianObsRuoteRL : Agent
 {
-    public PedestrianEnd endNode;
+    public Transform direction;
 
-    private AgentRoute agentRoute;
+    public AgentRoute agentRoute;
+    private Transform endNode;
     private int noOfRouteNodes;
 
     private Vector3 startingPosition;
@@ -24,18 +25,15 @@ public class PedestrianObsRuoteRL : Agent
 
     void OnDrawGizmosSelected()
     {
-        // Draw a the route path when selected in Unity
-        agentRoute = this.GetComponent<PedestrianRouteControl>().agentRoute;
         // Draw the line from agent to direction vector object if exists
-        if (this.GetComponent<PedestrianRouteControl>().direction != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(this.transform.position, this.GetComponent<PedestrianRouteControl>().direction.transform.position);
-        }
+        Gizmos.color = Color.red;
+        if (this.direction)
+            Gizmos.DrawLine(this.transform.position, this.direction.transform.position);
 
         // Draw first line from this transform to the target
         Gizmos.color = Color.white;
-        Gizmos.DrawLine(this.transform.position, agentRoute.activeRoute[0].transform.position);
+        if (this.agentRoute)
+            Gizmos.DrawLine(this.transform.position, agentRoute.activeRoute[0].transform.position);
 
         // Draw the path
         for (int i = 0; i < agentRoute.activeRoute.Length - 1; i++)
@@ -46,7 +44,6 @@ public class PedestrianObsRuoteRL : Agent
     void Start()
     {
         // Get agentRoute from AICharacterBehaviour script
-        agentRoute = this.GetComponent<PedestrianRouteControl>().agentRoute;
         noOfRouteNodes = agentRoute.activeRoute.Length - 2; // Exclude endNode & startNode
 
         AgentReset();
@@ -54,14 +51,19 @@ public class PedestrianObsRuoteRL : Agent
 
     public override void CollectObservations()
     {
-        AddVectorObs(-(this.transform.localPosition.x - 5) / 10f);
-        AddVectorObs(-(endNode.transform.localPosition.x - 5) / 10f);
+        endNode = agentRoute.activeRoute[noOfRouteNodes + 1].transform;
+        Vector3 envCentre = this.transform.parent.parent.transform.position;
 
+        AddVectorObs(-(this.transform.position.x - envCentre.x - 5f) / 10f);
+        AddVectorObs(-(endNode.position.x - envCentre.x - 5f) / 10f);
         AddVectorObs(false);
         AddVectorObs(-1f);
         AddVectorObs(-1f);
 
         AddVectorObs(0f); AddVectorObs(0f);
+
+        float envScale = 1f; //TODO 
+        AddVectorObs(envScale);
     }
 
     public override void AgentReset()
@@ -74,7 +76,7 @@ public class PedestrianObsRuoteRL : Agent
         // Set position for each route node
         for (int i = 0; i < vectorAction.Length; i++)
         {
-            Vector3 nodePos = new Vector3(vectorAction[i] * 5, 0.5f, RouteNode(i + 1).z);
+            Vector3 nodePos = new Vector3(- vectorAction[i] * 5, 0.5f, RouteNode(i + 1).z);
             agentRoute.activeRoute[i + 1].gameObject.transform.localPosition = nodePos;
         }
     }

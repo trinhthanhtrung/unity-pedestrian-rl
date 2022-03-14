@@ -36,7 +36,6 @@ public class CharacterDirectionControl : MonoBehaviour
         if (controlType == ControlType.Auto)
         {
             Vector3 direction = target.position - this.transform.position;
-            //direction2D = new Vector3(direction.normalized.x, 0, direction.normalized.z);
             direction2D.x = direction.normalized.x;
             direction2D.z = direction.normalized.z;
         }
@@ -47,7 +46,6 @@ public class CharacterDirectionControl : MonoBehaviour
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticalInput = Input.GetAxis("Vertical");
             speed = Mathf.Sqrt((horizontalInput * horizontalInput + verticalInput * verticalInput) / 2f);
-            //direction2D = new Vector3(horizontalInput, 0, verticalInput);
             direction2D.x = horizontalInput;
             direction2D.z = verticalInput;
 

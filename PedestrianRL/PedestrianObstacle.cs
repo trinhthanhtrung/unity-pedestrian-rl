@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum Direction { UP, DOWN, LEFT, RIGHT}
-
 public class PedestrianObstacle : Obstacle
 {
     public GameObject pedestrianObstacleAgent;
-
-    private Direction pedestrianObstacleDirection = Direction.DOWN;
+    public float speed;
 
     const float ENV_LENGTH = 22f;
 
@@ -21,13 +18,13 @@ public class PedestrianObstacle : Obstacle
     // Update is called once per frame
     void Update()
     {
-        PedestrianDest movingObsEndNode = pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>().agentRoute.activeRoute[11];
+        PedestrianDest movingObsEndNode = pedestrianObstacleAgent.GetComponent<PedestrianObsRuoteRL>().agentRoute.activeRoute[11];
         movingObsEndNode.transform.localPosition = new Vector3(GetPredictedDestinationX(), 0.5f, -12f);
     }
 
     public AgentRoute GetPredictedRoute()
     {
-        return pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>().agentRoute;
+        return pedestrianObstacleAgent.GetComponent<PedestrianObsRuoteRL>().agentRoute;
     }
 
     public float GetPredictedDestinationX()
@@ -40,8 +37,8 @@ public class PedestrianObstacle : Obstacle
 
         Vector3 movingObsPos = pedestrianObstacleAgent.transform.localPosition;
         Vector3 velocityVector;
-        if (pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>())
-            velocityVector = pedestrianObstacleAgent.GetComponent<PedestrianRouteControl>().direction.localPosition;
+        if (pedestrianObstacleAgent.GetComponent<PedestrianObsRuoteRL>())
+            velocityVector = pedestrianObstacleAgent.GetComponent<PedestrianObsRuoteRL>().direction.localPosition;
         else
         {
             Debug.Log("WARNING: Obstacle's velocity vector has NOT been set. Default to (0,1).");
@@ -51,6 +48,7 @@ public class PedestrianObstacle : Obstacle
         // Assuming obs is heading toward agent. Otherwise needs to flip the environment
         if (velocityVector.z <= 0)
         {
+            //TODO Flip the environment
             Debug.LogError("Invalid moving obstacle velocity vector.");
         }
         else

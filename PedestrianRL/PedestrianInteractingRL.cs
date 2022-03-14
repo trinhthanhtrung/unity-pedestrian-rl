@@ -55,9 +55,10 @@ public class PedestrianInteractingRL : Agent
     // Reward variables
     float N_goal = 0;
     float N_behaviour = 0;
-
+    
     // Rewarding coefficients
-    const float OBS_COEF = 0.05f;
+    const float OBS_COEF = 0.11f;
+    const float SPD_COEF = 0.05f;
 
     // Start is called before the first frame update
     void Start()
@@ -322,7 +323,7 @@ public class PedestrianInteractingRL : Agent
         // Discourage angle and speed change
         N_goal += -(currentSpeed - defaultSpeed) * (currentSpeed - defaultSpeed) * 0.3f;
         if (Mathf.Abs(angle - prevAngle) > 30 * Mathf.Deg2Rad)
-            N_goal += -0.02f;
+            N_goal += -SPD_COEF;
 
         prevDistance = currentDistance;
         prevSpeed = currentSpeed;
@@ -348,13 +349,9 @@ public class PedestrianInteractingRL : Agent
             float sqrDistToObs = Vector3.SqrMagnitude(predictedObsObject.transform.position - this.transform.position);
             gamma = 1 / (Mathf.Sqrt(sqrDistToObs) * obsSize + 1);
 
-            if (sqrDistToObs * obsSize < SQR_MIN_DIST) // Collide with obstacle
+            if (sqrDistToObs < SQR_MIN_DIST / obsSize) // Collide with obstacle
             {
                 N_behaviour += -OBS_COEF * obsDanger;
-            }
-            else if (sqrDistToObs < (SQR_MIN_DIST + 1.2f)) // Close to collision w/ obs
-            {
-                N_behaviour += (sqrDistToObs - SQR_MIN_DIST) * 0.07f / 1.2f - 0.07f;
             }
             else 
             {
@@ -362,12 +359,12 @@ public class PedestrianInteractingRL : Agent
                 switch (obstaclePredictionMode)
                 {
                     case ObstaclePredictionMode.None:
-                        if (IsInFrontOf(pedestrianObstacle.transform, this.transform, 60f, SQR_MIN_DIST + 4.0f))
+                        if (IsInFrontOf(pedestrianObstacle.transform, this.transform, 80f, (SQR_MIN_DIST + 4.0f) / obsSize))
                             N_behaviour += ((sqrDistToObs - SQR_MIN_DIST) * OBS_COEF / 4.0f - OBS_COEF) * obsDanger; 
                         break;
                     case ObstaclePredictionMode.Forward:
                     case ObstaclePredictionMode.MovementPrediction:
-                        if (IsCloseTo(predictedObsObject.transform, this.transform, SQR_MIN_DIST + 4.0f))
+                        if (IsCloseTo(predictedObsObject.transform, this.transform, (SQR_MIN_DIST + 4.0f) / obsSize))
                             N_behaviour += ((sqrDistToObs - SQR_MIN_DIST) * OBS_COEF / 4.0f - OBS_COEF) * obsDanger;
                         break;
                 }

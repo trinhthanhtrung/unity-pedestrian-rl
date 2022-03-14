@@ -16,12 +16,16 @@ public class Evaluator : MonoBehaviour
     public GameObject NavDestination;
     public GameObject NavObstacle; // Mimic from obstacle
 
+    public GameObject SimAgent;
+    public GameObject SimObstacle; // Mimic from obstacle
+
     public bool showPath;
 
     // Paths
     private GameObject AgentPath, ObstaclePath;
     private GameObject SFMObstaclePath, SFMAgentPath;
     private GameObject NavAgentPath, NavObstaclePath;
+    private GameObject SimAgentPath, SimObstaclePath;
 
     // Navigation Stats
     private float agentLength, SFMAgentLength, NavAgentLength;
@@ -37,6 +41,7 @@ public class Evaluator : MonoBehaviour
     private bool envRLDone;
     private bool envSFMDone;
     private bool envUnityNavDone;
+    private bool envSimulatedDone;
     private bool usrManualDone;
 
     //private float prevTime;
@@ -52,6 +57,8 @@ public class Evaluator : MonoBehaviour
             if (SFMObstacle)  SFMObstaclePath = InitPath(SFMObstaclePath, "SFM Obstacle Path");
             if (NavAgent)     NavAgentPath = InitPath(NavAgentPath, "Nav Agent Path");
             if (NavObstacle)  NavObstaclePath = InitPath(NavObstaclePath, "Nav Obstacle Path");
+            if (SimAgent)     SimAgentPath = InitPath(SimAgentPath, "Simulated Agent Path");
+            if (SimObstacle)  SimObstaclePath = InitPath(SimObstaclePath, "Simulated Obstacle Path");
         }
 
         if (!agent)
@@ -64,8 +71,8 @@ public class Evaluator : MonoBehaviour
         envRLDone = true;
         envSFMDone = true;
         envUnityNavDone = true;
+        envSimulatedDone = true;
 
-        //prevTime = Time.time;
     }
 
     void FixedUpdate()
@@ -88,6 +95,11 @@ public class Evaluator : MonoBehaviour
                     Instantiate(agentNodePrefab, NavAgent.transform.position, Quaternion.identity, NavAgentPath.transform);
                 if (NavObstaclePath)
                     Instantiate(obstacleNodePrefab, NavObstacle.transform.position, Quaternion.identity, NavObstaclePath.transform);
+                if (SimAgentPath)
+                    Instantiate(agentNodePrefab, SimAgent.transform.position, Quaternion.identity, SimAgentPath.transform);
+                if (SimObstaclePath)
+                    Instantiate(obstacleNodePrefab, SimObstacle.transform.position, Quaternion.identity, SimObstaclePath.transform);
+
             }
 
             // Check if envSFM and envNav Done (RL will send state directly to Evaluator)
@@ -105,6 +117,16 @@ public class Evaluator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (SimAgent && Input.GetKeyDown(KeyCode.P))
+        {
+            agent.transform.localPosition = SimAgent.GetComponent<MovementRecorder>().GetStartingPosition();
+            agent.GetComponent<PedestrianInteractingRL>().currentDestination.transform.position =
+                agent.transform.position + new Vector3(0, 0.8f, 10f);
+            if (SFMAgent) SFMAgent.transform.position = agent.transform.position + new Vector3(10f, 0, 0);
+            if (NavAgent) NavAgent.transform.position = agent.transform.position + new Vector3(20f, 0, 0);
+        }
+
         // Clone obstacle and destination's position
         if (SFMObstacle)
         {
@@ -118,9 +140,16 @@ public class Evaluator : MonoBehaviour
             NavDestination.transform.position = agent.GetComponent<PedestrianInteractingRL>().currentDestination.transform.position
                                                 + new Vector3(20f, 0, 0);
         }
+        if (SimObstacle)
+        {
+            SimObstacle.transform.position = obstacle.transform.position + new Vector3(-10f, 0, 0);
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Space))
             usrManualDone = true;
+
+
     }
 
     private void LogStats()
@@ -150,9 +179,6 @@ public class Evaluator : MonoBehaviour
             prevNavAgentPosition = NavAgent.transform.position;
         }
 
-        //float currentTime = Time.time;
-        //Debug.Log(currentTime - prevTime);
-        //prevTime = currentTime;
     }
 
     /// <summary>
@@ -160,9 +186,9 @@ public class Evaluator : MonoBehaviour
     /// </summary>
     public void InitNewEnvironment(GameObject agent, GameObject destination)
     {
-        string path = "Assets/navlog.csv";
+        string path = "Assets/Resources/navlog.csv";
 
-        //Write some text to the test.txt file
+        //Write text to the CSV file
         StreamWriter writer = new StreamWriter(path, true);
         writer.Write(agentLength); writer.Write(",");
         writer.Write(agentTime); writer.Write(",");
@@ -203,6 +229,7 @@ public class Evaluator : MonoBehaviour
         envRLDone = false;
         envSFMDone = false;
         envUnityNavDone = false;
+        envSimulatedDone = false;
         usrManualDone = false;
     } 
 
@@ -232,6 +259,7 @@ public class Evaluator : MonoBehaviour
             case 1: envRLDone = state; break;
             case 2: envSFMDone = state; break; 
             case 3: envUnityNavDone = state; break;
+            case 4: envSimulatedDone = state; break;
             case 0: usrManualDone = state; break;
         }
     }
@@ -253,12 +281,13 @@ public class Evaluator : MonoBehaviour
 
     public bool AllDone()
     {
-        return usrManualDone && envRLDone && envSFMDone && envUnityNavDone;
+        return usrManualDone && envRLDone && envSFMDone && envUnityNavDone && envSimulatedDone;
     }
 
     void OnDrawGizmosSelected()
     { 
-        if (!(AgentPath && ObstaclePath && SFMAgentPath && SFMObstaclePath && NavAgentPath && NavObstaclePath))
+        if (!(AgentPath && ObstaclePath && SFMAgentPath && SFMObstaclePath 
+            && NavAgentPath && NavObstaclePath && SimAgentPath && SimObstaclePath))
             return;
 
         DrawLine(ObstaclePath);
@@ -267,6 +296,8 @@ public class Evaluator : MonoBehaviour
         DrawLine(SFMObstaclePath);
         DrawLine(NavAgentPath);
         DrawLine(NavObstaclePath);
+        DrawLine(SimAgentPath);
+        DrawLine(SimObstaclePath);
     }
 
     void DrawLine(GameObject path)

@@ -70,10 +70,6 @@ public class MovementPreditor : MonoBehaviour
             epsilon = 1f;
 
             prevTime = Time.time;
-
-            //x_t5 = Mathf.Round(target.transform.position.x * 1000f) / 1000f;
-            //y_t5 = Mathf.Round(target.transform.position.z * 1000f) / 1000f;
-            //t5 = Time.time;
         }
     }
 
@@ -92,9 +88,6 @@ public class MovementPreditor : MonoBehaviour
                 UpdateBuffer(target);
             }
 
-            //if (Time.time < 3f)
-            //    predictedObject.transform.position = target.transform.position;
-
             else if (Time.time > prevTime + 0.1f)
             {
                 prevTime = Time.time;
@@ -102,7 +95,6 @@ public class MovementPreditor : MonoBehaviour
                 // Get the set of 4 previous data from the buffer
 
                 int step = (int)(confidentRate * CONFIDENT_GAMMA / BUFFER_DELTA); 
-                //int step = (int)(epsilon * epsilonGamma / BUFFER_DELTA);
                 // Set the minimum time gap between every samples at 0.3 second as human perception
                 // should not perceive movement quicker than this.
                 if (step < (0.3f / BUFFER_DELTA))
@@ -139,18 +131,9 @@ public class MovementPreditor : MonoBehaviour
                     /// Calculate the position of the predicted point (x_t, y_t) on if 
                     /// the Lagrange cubic curve formed by 4 set of (x, y, t)
 
-                    //Debug.Log("Now calculating the predicted positions of the obstacle with the following value:\n");
-                    //Debug.Log("ti,xi: " + t1 + ", " + x_t1 + " || " + t2 + ", " + x_t2 + " || " + t3 + ", " + x_t3 + " || " + t4 + ", " + x_t4 + "\n");
-                    //Debug.Log("ti,yi: " + t1 + ", " + y_t1 + " || " + t2 + ", " + y_t2 + " || " + t3 + ", " + y_t3 + " || " + t4 + ", " + y_t4 + "\n");
-
-                    //if (t1 == 0 || t2 == 0 || t3 == 0 || t4 == 0) return;
-
                     x_t = P(t5, new float[] { t1, x_t1, t2, x_t2, t3, x_t3, t4, x_t4 });
                     y_t = P(t5, new float[] { t1, y_t1, t2, y_t2, t3, y_t3, t4, y_t4 });
-                    //Debug.Log("xt, yt = (" + x_t + ", " + y_t + ")\n");
-
-                    //float oldEpsilon = epsilon;
-
+ 
                     float sqrPredictionOffset = (x_t - x_t5) * (x_t - x_t5) + (y_t - y_t5) * (y_t - y_t5);
                     float sqrPointsDistance = (x_t5 - x_t1) * (x_t5 - x_t1) + (y_t5 - y_t1) * (y_t5 - y_t1);
 
@@ -160,7 +143,7 @@ public class MovementPreditor : MonoBehaviour
                         epsilon = 1f / Mathf.Pow(scaledPointDistance + 1f, 5f);
                     }
                     else
-                        epsilon = 1f; //!
+                        epsilon = 1f; 
 
                     AddEpsilon(epsilon);
 

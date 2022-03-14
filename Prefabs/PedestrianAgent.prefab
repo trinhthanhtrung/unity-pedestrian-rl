@@ -2198,7 +2198,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agentRoute: {fileID: 0}
-  direction: {fileID: 0}
   currentSpeed: 0.4
   showCurrentTarget: 0
 --- !u!114 &7716947885672796865
@@ -2213,7 +2212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d333f99744edc2048986c2333711649d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brain: {fileID: 0}
+  brain: {fileID: 11400000, guid: 14e0e81f2119e864e923fbc3cb5c0856, type: 2}
   agentParameters:
     agentCameras: []
     maxStep: 0

@@ -9,7 +9,7 @@ public class Obstacle : MonoBehaviour
 
     public bool isActive = true;
 
-    public void clone(GameObject obstacle)
+    public void Clone(GameObject obstacle)
     {
 
         this.dangerLevel = obstacle.GetComponent<Obstacle>().dangerLevel;
